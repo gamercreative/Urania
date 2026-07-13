@@ -6,13 +6,13 @@
     no need to write the equations and such in teh comments as the equations are in the code themselves
 """
 
-abstract type DefinedLoss end
+abstract type Loss end
 
 # defined loss structs start here with their respectie functions
 """
     MSE (Mean Squared Error)
 """
-struct MSE <: DefinedLoss
+struct MSE <: Loss
     (::MSE)(y, ŷ) = mean(ŷ .- y)^2
     (Gradient)(::MSE, y, ŷ) = 2 .* (ŷ .- y) ./ length(y)
 end
