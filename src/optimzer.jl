@@ -7,3 +7,6 @@
 
 abstract type Optimzer end
 
+struct GD <: Optimzer
+    η::Float64
+end

@@ -8,6 +8,6 @@ include("model.jl")
 include("loss.jl")
 
 
-# @todo study for later to check if 
-function ClassicFit(model::ClassicModel, ) 
+function ClassicFit(model::ClassicModel, loss::Loss, )
+    
 end
