@@ -1,3 +1,4 @@
 {
-    "julia.environmentPath": "/Users/akram/Documents/code/julia_ml/src"
+    "julia.environmentPath": "/Users/akram/Documents/code/julia_ml",
+    "julia.lint.missingrefs": "all"
 }
