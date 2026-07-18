@@ -82,7 +82,7 @@ function gini(y::AbstractArray)
 
     # return the gini impurity calculation results
     return 1.0 - acc
-    
+
 end
 
 # a function that returns the most common label
@@ -96,3 +96,5 @@ function majority(y::AbstractVector)
     # use argmax to get the label of the max count
     return argmax(counts)
 end
+
+# there still exists the build tree function and the rest
