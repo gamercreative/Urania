@@ -26,7 +26,7 @@ struct Branch
 end
 
 # a tree used to classify data
-struct DecisionTreeClassifier <: ClassicModel
+struct DecisionTreeClassifier # <: ClassicModel
     # max node depth the tree is allowed to build
     max_depth::Int
 
@@ -55,7 +55,7 @@ function traverse_tree(root::Union{Leaf, Branch}, x::AbstractVector)
 end
 
 # the gini funciton is used to measure impurity
-function gini(y::AbstractArray)
+function gini(y::AbstractVector)
     # save legnth to save compute
     n = length(y)
 
@@ -129,30 +129,66 @@ function calculate_endpoints(x::AbstractVector{<:Number})
 end
 
 # calculates the best split
-function best_split(x::AbstractVector{<:Number}, y::AbstractVector)
-    # get thresholds
-    thresholds = calculate_endpoints(x)
+function best_split(X::AbstractMatrix{<:Number}, y::AbstractVector)
+    # lets seed so the first oiption always wins the lower the better
+    best_t = 0.0
+    best_score = Inf
+    best_f = 0
 
-    # if the feature space is constant then we return nothing since no endpoints exist
-    isempty(thresholds) && return nothing
+    for j in 1:size(X, 2) # type: nothing
+        # here column is just the feature space
+        col = X[:, j]
 
-    # lets seed with nothing so the first oiption always wins the lower the better
-    best_t = Inf
-    best_score = nothing
 
-    # loop over the thresholds and check purity
-    for t in thresholds
-        # get the split purity score
-        s = split_score(x, y, t)
+        # loop over the thresholds and check purity
+        for t in calculate_endpoints(col)
+            
+            # get the split purity score
+            s = split_score(col, y, t)
 
-        # if the score is smaller then the purity is lower than pick it as the best
-        if s < best_score
-            best_t = t
-            best_score = s
+            # if the score is smaller then the purity is lower than pick it as the best
+            if s < best_score
+                best_f = j
+                best_t = t
+                best_score = s
+            end
+
         end
-
     end
 
-    return (best_t, best_score)
+    best_f == 0 && return nothing
+    return (best_t, best_f, best_score)
 end
 
+# function to build the tree
+function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, depth::Int, max_depth::Int, min_sample_split::Int)
+    node_gini = gini(y)
+
+    # first check conditions as this function is recurrisve
+    if depth >= max_depth || length(y) < min_sample_split || node_gini == 0.0
+        return Leaf(majority(y))
+    end
+
+    # get best split
+    result = best_split(X, y)
+
+    # if nothing remianed = reached the end then its time to create the end node ( leaf )
+    if isnothing(result)
+        return Leaf(majority(y))
+    end
+
+    # unpack the best split
+    best_t, best_f, best_score = result
+
+    # check if the score is legit better then we create the leaf
+    if best_score >= node_gini
+        return Leaf(majority(y))
+    end
+
+    # build it reccursively
+    mask = X[:, best_f] .<= best_t
+    left = build_tree(X[mask, :], y[mask], depth+1, max_depth, min_sample_split)
+    right = build_tree(X[.!mask, :], y[.!mask], depth+1, max_depth, min_sample_split)
+
+    return Branch(best_f, best_t, left, right)
+end
