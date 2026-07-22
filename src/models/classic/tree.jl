@@ -13,7 +13,7 @@ end
 # a branch is a node inside the tree that holds the path metadata that leads to anotehr branch or leaf
 struct Branch
     # the feature numebr to be referenced
-    Feature::Int
+    feature::Int
 
     # the value to be compared to
     threshold::Float64
@@ -34,14 +34,14 @@ struct DecisionTreeClassifier <: ClassicModel
     min_sample_split::Int
 
     # the start of the tree
-    root::Union{Nothing,Branch}
+    root::Union{Nothing, Leaf, Branch}
 
     # is the model fitted or not so we can restrict or allow predictions on this instance
     fitted::Bool
 end
 
 # this is used to get next node depending on the threshold of the current node
-function traverse_tree(root::Branch, x::AbstractVector)
+function traverse_tree(root::Union{Leaf, Branch}, x::AbstractVector)
     # the had is either a leaf or a branch
     head::Union{Leaf, Branch} = root
 
@@ -97,4 +97,24 @@ function majority(y::AbstractVector)
     return argmax(counts)
 end
 
-# there still exists the build tree function and the rest
+# a function that gets the purity of a split
+function split_score(x::T, y::T, threshold::B) where {B<: Number , T <: AbstractArray{B}}
+    # first get hte split based on threshold
+    mask = x .<= threshold 
+
+    # split the right and left side based on the mask created
+    y_left = y[mask]
+    y_right = y[.!mask]
+
+    # get the lengths for the score calculations
+    n = length(y)
+    n1 = length(y_left)
+    n2 = length(y_right)
+
+    # return the split purity score
+    return (n1/n) * gini(y_left) + (n2/n) * gini(y_right)
+end
+
+function best_split()
+    
+end
