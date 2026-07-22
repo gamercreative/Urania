@@ -47,7 +47,7 @@ function traverse_tree(root::Union{Leaf, Branch}, x::AbstractVector)
 
     # iterate over all the branches till we stop having a branch as the next branch
     while isa(head, Branch)
-        head = x[head.Feature] <= head.threshold ? head.left : head.right
+        head = x[head.feature] <= head.threshold ? head.left : head.right
     end
 
     # if the last node we reached is a leaf then return its prediciton if not then return error
@@ -98,7 +98,7 @@ function majority(y::AbstractVector)
 end
 
 # a function that gets the purity of a split
-function split_score(x::T, y::T, threshold::B) where {B<: Number , T <: AbstractArray{B}}
+function split_score(x::T, y::AbstractVector, threshold::B) where {B<: Number , T <: AbstractVector{B}}
     # first get hte split based on threshold
     mask = x .<= threshold 
 
@@ -115,6 +115,44 @@ function split_score(x::T, y::T, threshold::B) where {B<: Number , T <: Abstract
     return (n1/n) * gini(y_left) + (n2/n) * gini(y_right)
 end
 
-function best_split()
-    
+# calculate midpoints from vector
+function calculate_endpoints(x::AbstractVector{<:Number})
+    # get unique sorted inputs so that we can get midpoints without any duplicates its cleaner and better
+    v = sort(unique(x))
+    n = length(v)
+
+    # return nothing if the feature space is constant
+    n < 2 && return Float64[]
+
+    # return the midponts of each one with x1 + x2 / 2
+    return [(v[i-1] + v[i])/2 for i in 2:lastindex(v)]
 end
+
+# calculates the best split
+function best_split(x::AbstractVector{<:Number}, y::AbstractVector)
+    # get thresholds
+    thresholds = calculate_endpoints(x)
+
+    # if the feature space is constant then we return nothing since no endpoints exist
+    isempty(thresholds) && return nothing
+
+    # lets seed with nothing so the first oiption always wins the lower the better
+    best_t = Inf
+    best_score = nothing
+
+    # loop over the thresholds and check purity
+    for t in thresholds
+        # get the split purity score
+        s = split_score(x, y, t)
+
+        # if the score is smaller then the purity is lower than pick it as the best
+        if s < best_score
+            best_t = t
+            best_score = s
+        end
+
+    end
+
+    return (best_t, best_score)
+end
+
