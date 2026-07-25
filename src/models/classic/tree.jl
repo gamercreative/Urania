@@ -10,7 +10,13 @@ struct Leaf
     prediction
 end
 
-# a branch is a node inside the tree that holds the path metadata that leads to anotehr branch or leaf
+"""
+    This struct holds a branch `intermediate node` in a decision tree
+    `feature`: the number of feathre the node threshold depends on
+    `threshold`: the threshold is the conditions value
+    `left`: left refers to another branch or leaf that has a path of (<= condition)
+    `right`: right refers to another branch or leaf that has a path of (> condition)
+"""
 struct Branch
     # the feature numebr to be referenced
     feature::Int
@@ -25,7 +31,13 @@ struct Branch
     right::Union{Leaf,Branch}
 end
 
-# a tree used to classify data
+"""
+    This struct holds the metadata for a `DecisionTreeClassifier`
+    `max_depth`: the max depth that a tree can have
+    `min_sample_split`: the number of samples that pass through the conditions to make it justify a valid split
+    `root`: the root `head` of the tree
+    `fitted`: a bool to check if the model is trained and ready to use or not
+"""
 struct DecisionTreeClassifier # <: ClassicModel
     # max node depth the tree is allowed to build
     max_depth::Int
