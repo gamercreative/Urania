@@ -192,11 +192,6 @@ function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int
     # unpack the best split
     best_t, best_f, best_score = result
 
-    # check if the score is legit better then we create the leaf
-    if best_score >= node_gini
-        return Leaf(majority(y))
-    end
-
     # build it reccursively
     mask = X[:, best_f] .<= best_t
     left = build_tree(X[mask, :], y[mask], max_depth, min_sample_split, depth+1)

@@ -34,14 +34,15 @@ function TestTreeClassifier()
     # end test case
     end
 
-     "automatic XOR tree test" 
-        head = build_tree(x, y, 2, 1)
+    @testset "automatic XOR tree test" begin
+        head = build_tree(x, y, 5, 2)
         dump(head)
 
-        traverse_tree(head, x[1,:]) == y[1]
-        traverse_tree(head, x[2,:]) == y[2]
-        traverse_tree(head, x[3,:]) == y[3]
-        traverse_tree(head, x[4,:]) == y[4]
+        @test traverse_tree(head, x[1,:]) == y[1]
+        @test traverse_tree(head, x[2,:]) == y[2]
+        @test traverse_tree(head, x[3,:]) == y[3]
+        @test traverse_tree(head, x[4,:]) == y[4]
+    end
 
 end
 
