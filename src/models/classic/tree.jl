@@ -173,7 +173,7 @@ function best_split(X::AbstractMatrix{<:Number}, y::AbstractVector)
 end
 
 # function to build the tree
-function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, depth::Int, max_depth::Int, min_sample_split::Int)
+function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int, min_sample_split::Int, depth::Int = 0)
     node_gini = gini(y)
 
     # first check conditions as this function is recurrisve
@@ -199,8 +199,12 @@ function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, depth::Int, ma
 
     # build it reccursively
     mask = X[:, best_f] .<= best_t
-    left = build_tree(X[mask, :], y[mask], depth+1, max_depth, min_sample_split)
-    right = build_tree(X[.!mask, :], y[.!mask], depth+1, max_depth, min_sample_split)
+    left = build_tree(X[mask, :], y[mask], max_depth, min_sample_split, depth+1)
+    right = build_tree(X[.!mask, :], y[.!mask], max_depth, min_sample_split, depth+1)
 
     return Branch(best_f, best_t, left, right)
 end
+
+"""
+    Here is the random forest section of my file
+"""

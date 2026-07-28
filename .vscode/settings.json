@@ -1,4 +1,5 @@
 {
     "julia.environmentPath": "/Users/akram/Documents/code/julia_ml",
-    "julia.lint.missingrefs": "all"
+    "julia.lint.missingrefs": "all",
+    "dbmlERDPreviewer.preferredTheme": "dark"
 }
