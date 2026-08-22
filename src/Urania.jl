@@ -25,4 +25,8 @@ include("data/data_preperation.jl")
 include("models/classic/linear.jl")
 include("models/classic/tree.jl")
 
+# uncomment to run tests
+include("tests/models.jl")
+# include("tests/data.jl")
+
 end
