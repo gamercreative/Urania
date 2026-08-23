@@ -160,7 +160,6 @@ function build_classifier_tree_model(X::AbstractMatrix{<:Real}, y::AbstractVecto
         max_depth,
         min_sample_split,
         tree,
-        true
     )
 
     return model

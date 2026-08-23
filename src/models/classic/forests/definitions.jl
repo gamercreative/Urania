@@ -2,16 +2,26 @@
     This file holds the definitions be it structs or abstracts for the forest models
 """
 
-abstract type ForestModelType <: ClassicModel end
+abstract type ForestModel <: ClassicModel end
 
 # this is the struct for a random forest of whatever tree type exists
-struct RandomForest <: ForestModelType
+struct RandomForest <: ForestModel
+    # store the tree specifications like max_depth and min_sample_split
+    specs::TreeSpecifications
+    
     # a vector of tree model types
-    trees::Vector{TreeModelType}
+    trees::Vector{TreeModel}
+end
 
-    # max depth for the tree
-    max_depth
+function is_fitted(forest::ForestModel)
+    # if its empty not trees then its not fitted
+    isempty(forest.trees) && return false
 
-    # minimum sample split to prevent overfitting
-    min_smaple_split
+    for tree in forest.trees
+        # if hte tree is not fitted then return false
+        !is_fitted(tree) && return false
+    end
+
+    # return fitted if it has trees and each one is fitted
+    return true
 end

@@ -7,7 +7,7 @@ include("definitions.jl")
 
 function create_random_forest(X::AbstractMatrix{<:Real}, y::AbstractVector, tree_count::Int, max_depth::Int, min_sample_split::Int)
     # used to store the tree types
-    rf = TreeModelType[]
+    rf = TreeModel[]
 
     # create the trees one by one and store them
     for _ in 1:tree_count
@@ -25,6 +25,6 @@ function create_random_forest(X::AbstractMatrix{<:Real}, y::AbstractVector, tree
     return model
 end
 
-function traverse_forest(forest::ForestModelType, x::AbstractMatrix{<:Real})
+function traverse_forest(forest::ForestModel, x::AbstractMatrix{<:Real})
     
 end

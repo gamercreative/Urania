@@ -22,12 +22,15 @@ include("data/data_preperation.jl")
 
 
 # model-specific pipelines
-include("models/classic/linear.jl")
+include("models/classic/linear_regressions/linear.jl")
 include("models/classic/trees/tree.jl")
 include("models/classic/forests/forest.jl")
 
+# datasets used to test across the library
+include("tests/datasets.jl")
+
 # uncomment to run tests
-include("tests/models.jl")
-# include("tests/data.jl")
+# include("tests/models.jl")
+include("tests/data.jl")
 
 end

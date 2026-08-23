@@ -3,14 +3,24 @@
 """
 
 # tree structs are immutable and the value doesnt change since creation 
-abstract type TreeComponent end
-abstract type TreeType end
-abstract type TreeModelType <: ClassicModel end
+abstract type TreeNode end
+abstract type TreeModel <: ClassicModel end
+
+"""
+    holds the metdata for a tree or trees in a forest
+"""
+struct TreeSpecifications <: TreeModel
+    # max depth for the tree
+    max_depth
+    
+    # minimum sample split to prevent overfitting
+    min_smaple_split
+end
 
 """
     A leaf is the final node in a tree that holds a prediction
 """
-struct Leaf{L} <: TreeComponent
+struct Leaf{L} <: TreeNode
     # the value fo the edge node (final answer based on path)
     prediction::L
 end
@@ -22,7 +32,7 @@ end
     `left`: left refers to another branch or leaf that has a path of (<= condition)
     `right`: right refers to another branch or leaf that has a path of (> condition)
 """
-struct Branch{L} <: TreeComponent
+struct Branch{L} <: TreeNode
     # the feature numebr to be referenced
     feature::Int
 
@@ -43,16 +53,12 @@ end
     `root`: the root `head` of the tree
     `fitted`: a bool to check if the model is trained and ready to use or not
 """
-struct DecisionTreeClassifier <: TreeModelType
-    # max node depth the tree is allowed to build
-    max_depth::Int
-
-    # used to prevent overfitting as we are 
-    min_sample_split::Int
-
+struct DecisionTreeClassifier <: TreeModel
+    # store the tree specifications like max_depth and min_sample_split
+    specs::TreeSpecifications
+    
     # the start of the tree
     root::Union{Nothing, Leaf, Branch}
-
-    # is the model fitted or not so we can restrict or allow predictions on this instance
-    fitted::Bool
 end
+
+is_fitted(tree::TreeModel) = !isnothing(tree.root)

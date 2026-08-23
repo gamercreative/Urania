@@ -1,5 +1,6 @@
 # the mother interface for all model
 abstract type Model end
+abstract type ModelType end
 
 # the children interfaces for the mother model
 """
@@ -13,3 +14,6 @@ abstract type ClassicModel <: Model end
     and mostly for iterative traning
 """
 abstract type DeepLearningModel <: Model end
+
+abstract type Classification <: ModelType end
+abstract type Regression <: ModelType end

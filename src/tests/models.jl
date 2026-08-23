@@ -4,14 +4,6 @@ using Test
     In this section we test models
 """
 
-
-x_xor = [0.0 0.0 
-    0.0 1.0 
-    1.0 0.0 
-    1.0 1.0]
-
-y_xor = [0.0, 1.0, 1.0, 0.0]
-
 function TestCreateTreeClassifier()
 
     # first test the structure and forward pass of the classifier tree
@@ -67,10 +59,11 @@ function TestRandomForest()
 
         for tree in forest.trees
             @test tree isa DecisionTreeClassifier
-            @test tree.fitted
             @test tree.root isa Union{Leaf, Branch}
+            @test is_fitted(tree)
         end
     end
 end
 
+TestCreateTreeClassifier()
 TestRandomForest()
