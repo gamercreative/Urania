@@ -1,64 +1,9 @@
-include("../../data/data_preperation.jl")
-# ===
-# Tree models
-# ===
+include("definitions.jl")
 
-
-# tree structs are immutable and the value doesnt change since creation 
-abstract type TreeComponent end
-abstract type TreeType end
-abstract type TreeModelType <: ClassicModel end
-abstract type ForestModelType <: ClassicModel end
-
-"""
-    A leaf is the final node in a tree that holds a prediction
-"""
-struct Leaf <: TreeComponent
-    # the value fo the edge node (final answer based on path)
-    prediction
-end
-
-"""
-    This struct holds a branch `intermediate node` in a decision tree
-    `feature`: the number of feathre the node threshold depends on
-    `threshold`: the threshold is the conditions value
-    `left`: left refers to another branch or leaf that has a path of (<= condition)
-    `right`: right refers to another branch or leaf that has a path of (> condition)
-"""
-struct Branch <: TreeComponent
-    # the feature numebr to be referenced
-    feature::Int
-
-    # the value to be compared to
-    threshold::Float64
-
-    # the node to the left if the operation is true
-    left::Union{Leaf,Branch}
-
-    # the node to the right if the comparison is false
-    right::Union{Leaf,Branch}
-end
-
-"""
-    This struct holds the metadata for a `DecisionTreeClassifier`
-    `max_depth`: the max depth that a tree can have
-    `min_sample_split`: the number of samples that pass through the conditions to make it justify a valid split
-    `root`: the root `head` of the tree
-    `fitted`: a bool to check if the model is trained and ready to use or not
-"""
-struct DecisionTreeClassifier <: TreeModelType
-    # max node depth the tree is allowed to build
-    max_depth::Int
-
-    # used to prevent overfitting as we are 
-    min_sample_split::Int
-
-    # the start of the tree
-    root::Union{Nothing, Leaf, Branch}
-
-    # is the model fitted or not so we can restrict or allow predictions on this instance
-    fitted::Bool
-end
+#= ===
+    Tree outgoing functions following the multiple dispatch principle
+    holds the includes required for the Tree module to operate
+=== =# 
 
 # this is used to get next node depending on the threshold of the current node
 function traverse_tree(root::Union{Leaf, Branch}, x::AbstractVector)
@@ -219,47 +164,4 @@ function build_classifier_tree_model(X::AbstractMatrix{<:Real}, y::AbstractVecto
     )
 
     return model
-end
-
-"""
-    Here is the random forest section of my file
-"""
-
-struct RandomForest <: ForestModelType
-    # a vector of tree model types
-    trees::Vector{TreeModelType}
-
-    # number of trees in the forest
-    tree_count
-
-    # max depth for the tree
-    max_depth
-
-    # minimum sample split to prevent overfitting
-    min_smaple_split
-end
-
-function create_random_forest(X::AbstractMatrix{<:Real}, y::AbstractVector, tree_count::Int, max_depth::Int, min_sample_split::Int)
-    # used to store the tree types
-    rf = TreeModelType[]
-
-    # create the trees one by one and store them
-    for _ in 1:tree_count
-        X_t, y_t = bootstrap_sampling(X,y)
-        push!(rf, build_classifier_tree_model(X_t, y_t, max_depth, min_sample_split))
-    end
-
-    # create the random forest and return
-    model = RandomForest(
-        rf,
-        tree_count,
-        max_depth,
-        min_sample_split
-    )
-
-    return model
-end
-
-function traverse_forest(fores::ForestModelType, x::AbstractMatrix{<:Real})
-    
 end

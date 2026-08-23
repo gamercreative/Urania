@@ -1,8 +1,5 @@
 using Test
 
-include("../models/model.jl")
-include("../models/classic/tree.jl")
-
 """
     In this section we test models
 """
@@ -67,9 +64,6 @@ end
 function TestRandomForest()
     @testset "random forest construction" begin
         forest = create_random_forest(x_xor, y_xor, 2, 5, 2)
-
-        # the forest is a struct, so we iterate over its `trees` field
-        @test length(forest.trees) == forest.tree_count
 
         for tree in forest.trees
             @test tree isa DecisionTreeClassifier

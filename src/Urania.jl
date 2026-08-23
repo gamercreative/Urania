@@ -23,7 +23,8 @@ include("data/data_preperation.jl")
 
 # model-specific pipelines
 include("models/classic/linear.jl")
-include("models/classic/tree.jl")
+include("models/classic/trees/tree.jl")
+include("models/classic/forests/forest.jl")
 
 # uncomment to run tests
 include("tests/models.jl")
