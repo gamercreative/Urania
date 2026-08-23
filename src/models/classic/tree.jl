@@ -1,11 +1,19 @@
+include("../../data/data_preperation.jl")
 # ===
 # Tree models
 # ===
 
-# tree structs are immutable and the value doesnt change since creation 
 
-# a leaf is the final node in a tree that holds a prediction
-struct Leaf
+# tree structs are immutable and the value doesnt change since creation 
+abstract type TreeComponent end
+abstract type TreeType end
+abstract type TreeModelType <: ClassicModel end
+abstract type ForestModelType <: ClassicModel end
+
+"""
+    A leaf is the final node in a tree that holds a prediction
+"""
+struct Leaf <: TreeComponent
     # the value fo the edge node (final answer based on path)
     prediction
 end
@@ -17,7 +25,7 @@ end
     `left`: left refers to another branch or leaf that has a path of (<= condition)
     `right`: right refers to another branch or leaf that has a path of (> condition)
 """
-struct Branch
+struct Branch <: TreeComponent
     # the feature numebr to be referenced
     feature::Int
 
@@ -38,7 +46,7 @@ end
     `root`: the root `head` of the tree
     `fitted`: a bool to check if the model is trained and ready to use or not
 """
-struct DecisionTreeClassifier # <: ClassicModel
+struct DecisionTreeClassifier <: TreeModelType
     # max node depth the tree is allowed to build
     max_depth::Int
 
@@ -150,7 +158,7 @@ function best_split(X::AbstractMatrix{<:Number}, y::AbstractVector)
     for j in 1:size(X, 2) # type: nothing
         # here column is just the feature space
         col = X[:, j]
-
+            
 
         # loop over the thresholds and check purity
         for t in calculate_endpoints(col)
@@ -173,7 +181,7 @@ function best_split(X::AbstractMatrix{<:Number}, y::AbstractVector)
 end
 
 # function to build the tree
-function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int, min_sample_split::Int, depth::Int = 0)
+function build_classifier_tree_node(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int, min_sample_split::Int, depth::Int = 0)
     node_gini = gini(y)
 
     # first check conditions as this function is recurrisve
@@ -194,13 +202,64 @@ function build_tree(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int
 
     # build it reccursively
     mask = X[:, best_f] .<= best_t
-    left = build_tree(X[mask, :], y[mask], max_depth, min_sample_split, depth+1)
-    right = build_tree(X[.!mask, :], y[.!mask], max_depth, min_sample_split, depth+1)
+    left = build_classifier_tree_node(X[mask, :], y[mask], max_depth, min_sample_split, depth+1)
+    right = build_classifier_tree_node(X[.!mask, :], y[.!mask], max_depth, min_sample_split, depth+1)
 
     return Branch(best_f, best_t, left, right)
+end
+
+function build_classifier_tree_model(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int, min_sample_split::Int)
+    tree = build_classifier_tree_node(X, y, max_depth, min_sample_split)
+
+    model = DecisionTreeClassifier(
+        max_depth,
+        min_sample_split,
+        tree,
+        true
+    )
+
+    return model
 end
 
 """
     Here is the random forest section of my file
 """
-# this is my random forest
+
+struct RandomForest <: ForestModelType
+    # a vector of tree model types
+    trees::Vector{TreeModelType}
+
+    # number of trees in the forest
+    tree_count
+
+    # max depth for the tree
+    max_depth
+
+    # minimum sample split to prevent overfitting
+    min_smaple_split
+end
+
+function create_random_forest(X::AbstractMatrix{<:Real}, y::AbstractVector, tree_count::Int, max_depth::Int, min_sample_split::Int)
+    # used to store the tree types
+    rf = TreeModelType[]
+
+    # create the trees one by one and store them
+    for _ in 1:tree_count
+        X_t, y_t = bootstrap_sampling(X,y)
+        push!(rf, build_classifier_tree_model(X_t, y_t, max_depth, min_sample_split))
+    end
+
+    # create the random forest and return
+    model = RandomForest(
+        rf,
+        tree_count,
+        max_depth,
+        min_sample_split
+    )
+
+    return model
+end
+
+function traverse_forest(fores::ForestModelType, x::AbstractMatrix{<:Real})
+    
+end
