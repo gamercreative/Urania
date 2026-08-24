@@ -156,11 +156,18 @@ end
 function build_classifier_tree_model(X::AbstractMatrix{<:Real}, y::AbstractVector, max_depth::Int, min_sample_split::Int)
     tree = build_classifier_tree_node(X, y, max_depth, min_sample_split)
 
-    model = DecisionTreeClassifier(
+    # write the spec for the tree
+    specs = TreeSpecifications(
         max_depth,
-        min_sample_split,
-        tree,
+        min_sample_split
     )
 
+    # the model itself is a struct with the tree and the specs of the tree
+    model = DecisionTreeClassifier(
+        specs,
+        tree
+    )
+
+    # return the model
     return model
 end

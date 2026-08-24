@@ -30,7 +30,7 @@ include("models/classic/forests/forest.jl")
 include("tests/datasets.jl")
 
 # uncomment to run tests
-# include("tests/models.jl")
-include("tests/data.jl")
+include("tests/models.jl")
+# include("tests/data.jl")
 
 end

@@ -63,6 +63,18 @@ function TestRandomForest()
             @test is_fitted(tree)
         end
     end
+
+    @testset "random forest prediction" begin
+        # write the forest variable as the random forest object
+        forest = create_random_forest(x_xor, y_xor, 2, 5, 2)
+
+        # test the prediction of the forest with all the data of x_or 
+        traverse_forest(forest, x_xor[1,:]) == y_xor[1]
+        traverse_forest(forest, x_xor[2,:]) == y_xor[2]
+        traverse_forest(forest, x_xor[3,:]) == y_xor[3]
+        traverse_forest(forest, x_xor[4,:]) == y_xor[4]
+
+    end
 end
 
 TestCreateTreeClassifier()

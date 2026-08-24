@@ -15,16 +15,25 @@ function create_random_forest(X::AbstractMatrix{<:Real}, y::AbstractVector, tree
         push!(rf, build_classifier_tree_model(X_t, y_t, max_depth, min_sample_split))
     end
 
-    # create the random forest and return
-    model = RandomForest(
-        rf,
+    # write the tree spec to the trees inside the forest
+    specs = TreeSpecifications(
         max_depth,
         min_sample_split
+    )
+
+    # create the random forest and return
+    model = RandomForest(
+        specs,
+        rf
     )
 
     return model
 end
 
-function traverse_forest(forest::ForestModel, x::AbstractMatrix{<:Real})
-    
+function traverse_forest(forest::ForestModel, x::AbstractVector{<:Real})
+    # traverse each tree and get the prediction
+    predictions = [traverse_tree(tree.tree, x) for tree in forest.trees] 
+
+    # return the average of the predictions
+    return mean(predictions)
 end
