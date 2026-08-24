@@ -32,8 +32,9 @@ end
 
 function traverse_forest(forest::ForestModel, x::AbstractVector{<:Real})
     # traverse each tree and get the prediction
-    predictions = [traverse_tree(tree.tree, x) for tree in forest.trees] 
+    predictions = [traverse_tree(tree.root, x) for tree in forest.trees] 
 
-    # return the average of the predictions
-    return mean(predictions)
+    # return the most frequent prediction
+    return mode(predictions)
+    
 end

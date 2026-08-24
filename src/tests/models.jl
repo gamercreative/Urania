@@ -55,7 +55,7 @@ end
 
 function TestRandomForest()
     @testset "random forest construction" begin
-        forest = create_random_forest(x_xor, y_xor, 2, 5, 2)
+        forest = create_random_forest(X_hand_train, y_hand_train, 10, 5, 2)
 
         for tree in forest.trees
             @test tree isa DecisionTreeClassifier
@@ -66,13 +66,10 @@ function TestRandomForest()
 
     @testset "random forest prediction" begin
         # write the forest variable as the random forest object
-        forest = create_random_forest(x_xor, y_xor, 2, 5, 2)
+        forest = create_random_forest(X_hand_train, y_hand_train, 10, 5, 2)
 
-        # test the prediction of the forest with all the data of x_or 
-        traverse_forest(forest, x_xor[1,:]) == y_xor[1]
-        traverse_forest(forest, x_xor[2,:]) == y_xor[2]
-        traverse_forest(forest, x_xor[3,:]) == y_xor[3]
-        traverse_forest(forest, x_xor[4,:]) == y_xor[4]
+        @test traverse_forest(forest, X_hand_test[1,:]) == y_hand_test[1]
+        @test traverse_forest(forest, X_hand_test[7,:]) == y_hand_test[7]
 
     end
 end

@@ -6,6 +6,7 @@ Machine learning library built from scratch in Julia.
 module Urania
 
 using Statistics
+using StatsBase
 
 # model base declarations
 include("models/model.jl")
