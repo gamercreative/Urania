@@ -6,8 +6,11 @@ abstract type ForestModel <: ClassicModel end
 
 # this is the struct for a random forest of whatever tree type exists
 struct RandomForest <: ForestModel
-    # store the tree specifications like max_depth and min_sample_split
-    specs::TreeSpecifications
+    # max depth for the tree
+    max_depth
+    
+    # minimum sample split to prevent overfitting
+    min_sample_split
     
     # a vector of tree model types
     trees::Vector{TreeModel}

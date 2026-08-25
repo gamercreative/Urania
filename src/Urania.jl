@@ -24,8 +24,8 @@ include("data/data_preperation.jl")
 
 # model-specific pipelines
 include("models/classic/linear_regressions/linear.jl")
-include("models/classic/trees/tree.jl")
-include("models/classic/forests/forest.jl")
+include("models/classic/trees/format.jl")
+include("models/classic/forests/format.jl")
 
 # datasets used to test across the library
 include("tests/datasets.jl")

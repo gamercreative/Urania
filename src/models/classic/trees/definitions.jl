@@ -54,8 +54,11 @@ end
     `fitted`: a bool to check if the model is trained and ready to use or not
 """
 struct DecisionTreeClassifier <: TreeModel
-    # store the tree specifications like max_depth and min_sample_split
-    specs::TreeSpecifications
+    # max depth for the tree
+    max_depth
+    
+    # minimum sample split to prevent overfitting
+    min_sample_split
     
     # the start of the tree
     root::Union{Nothing, Leaf, Branch}

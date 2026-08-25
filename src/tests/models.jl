@@ -28,7 +28,6 @@ function TestCreateTreeClassifier()
 
     @testset "automatic XOR tree test" begin
         head = build_classifier_tree_node(x_xor, y_xor, 5, 2)
-        dump(head)
 
         @test traverse_tree(head, x_xor[1,:]) == y_xor[1]
         @test traverse_tree(head, x_xor[2,:]) == y_xor[2]
@@ -76,3 +75,26 @@ end
 
 TestCreateTreeClassifier()
 TestRandomForest()
+
+# write a function to test the fit, predict functions for the trees
+function PredictedTreeWorkflow()
+    specs = TreeSpecifications(5, 2)
+
+    tree = fit(specs, x_xor, y_xor)
+
+    @testset "tree prediction" begin
+
+        @test predict(tree, x_xor[1,:] ) == y_xor[1]
+        @test predict(tree, x_xor[2,:]) == y_xor[2]
+        @test predict(tree, x_xor[3,:]) == y_xor[3]
+        @test predict(tree, x_xor[4,:]) == y_xor[4]
+
+    end
+end
+
+# write a function to test the fit, predict functions for the forest
+function PredictedForestWorkflow()
+
+end
+
+PredictedTreeWorkflow()
