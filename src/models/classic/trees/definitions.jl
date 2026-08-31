@@ -17,12 +17,14 @@ abstract type TreeModel <: ClassicModel end
 """
 abstract type TreeType end
 struct  RegressionTree <: TreeType end
-struct  ClassifierTree <: TreeType end
+struct  ClassificationTree <: TreeType end
 
 """
     holds the metdata for a tree or trees in a forest
 """
-struct TreeSpecifications <: TreeModel
+struct TreeSpecifications{T<:TreeType} <: TreeModel
+    type ::T
+
     # max depth for the tree
     max_depth
 
@@ -67,6 +69,9 @@ end
     `fitted`: a bool to check if the model is trained and ready to use or not
 """
 struct DecisionTree{T<:TreeType} <: TreeModel
+    # types of tree regression or classification
+    type::T
+
     # max depth for the tree
     max_depth
     

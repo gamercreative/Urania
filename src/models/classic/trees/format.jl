@@ -1,4 +1,6 @@
 include("definitions.jl")
+include("regression.jl")
+include("classification.jl")
 include("tree.jl")
 
 """
@@ -6,8 +8,9 @@ include("tree.jl")
     such as predict and fit
 """
 
+
 function fit(specs::TreeSpecifications, X::AbstractMatrix{<:Real}, y::AbstractVector{<:Real})
-    tree = build_classifier_tree_model(X, y, specs.max_depth, specs.min_smaple_split)
+    tree = build_decision_tree_model(X, y, specs.type ,specs.max_depth, specs.min_smaple_split)
 
     return tree
 end

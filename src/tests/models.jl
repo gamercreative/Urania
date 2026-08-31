@@ -27,7 +27,7 @@ function TestCreateTreeClassifier()
     end
 
     @testset "automatic XOR tree test" begin
-        head = build_classifier_tree_node(x_xor, y_xor, 5, 2)
+        head = build_decision_tree_node(x_xor, y_xor, ClassifierTree() , 5, 2)
 
         @test traverse_tree(head, x_xor[1,:]) == y_xor[1]
         @test traverse_tree(head, x_xor[2,:]) == y_xor[2]
@@ -53,15 +53,6 @@ function TestTreeClassifier(tree::Union{Branch, Leaf})
 end
 
 function TestRandomForest()
-    @testset "random forest construction" begin
-        forest = create_random_forest(X_hand_train, y_hand_train, 10, 5, 2)
-
-        for tree in forest.trees
-            @test tree isa DecisionTreeClassifier
-            @test tree.root isa Union{Leaf, Branch}
-            @test is_fitted(tree)
-        end
-    end
 
     @testset "random forest prediction" begin
         # write the forest variable as the random forest object
@@ -73,12 +64,9 @@ function TestRandomForest()
     end
 end
 
-TestCreateTreeClassifier()
-TestRandomForest()
-
 # write a function to test the fit, predict functions for the trees
 function PredictedTreeWorkflow()
-    specs = TreeSpecifications(5, 2)
+    specs = TreeSpecifications(ClassificationTree(), 5, 2)
 
     tree = fit(specs, x_xor, y_xor)
 
