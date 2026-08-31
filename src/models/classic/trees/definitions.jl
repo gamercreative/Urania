@@ -7,12 +7,25 @@ abstract type TreeNode end
 abstract type TreeModel <: ClassicModel end
 
 """
+    used as to create the multi dispatch methods for the trees
+        impurity(::Classification, y) = gini(y)
+        impurity(::Regression,     y) = variance(y)
+
+        leaf_value(::Classification, y) = majority(y)
+        leaf_value(::Regression,     y) = mean(y)
+    like this
+"""
+abstract type TreeType end
+struct  RegressionTree <: TreeType end
+struct  ClassifierTree <: TreeType end
+
+"""
     holds the metdata for a tree or trees in a forest
 """
 struct TreeSpecifications <: TreeModel
     # max depth for the tree
     max_depth
-    
+
     # minimum sample split to prevent overfitting
     min_smaple_split
 end
@@ -53,7 +66,7 @@ end
     `root`: the root `head` of the tree
     `fitted`: a bool to check if the model is trained and ready to use or not
 """
-struct DecisionTreeClassifier <: TreeModel
+struct DecisionTree{T<:TreeType} <: TreeModel
     # max depth for the tree
     max_depth
     
